@@ -43,6 +43,10 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.2
 /* header */
 .top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--panel);position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
 .brand{display:flex;align-items:baseline;gap:10px;margin-right:auto}
+.dlapp{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 12px;cursor:pointer;font-family:var(--f-display);font-weight:600;letter-spacing:.03em;color:var(--ink)}
+.dlapp:hover{border-color:var(--accent)}
+.dlapp svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+html.framed .dl-only{display:none!important}
 .brand .logo{width:30px;height:30px;align-self:center;flex:none}
 .brand h1{font-size:20px;font-weight:700;letter-spacing:.02em}
 .brand h1 b{color:var(--accent);font-weight:700}
@@ -199,6 +203,7 @@ td.c,th.c{text-align:center;font-family:var(--f-mono)}
 
 <header class="top">
   <div class="brand"><svg class="logo" viewBox="0 0 200 200" aria-hidden="true"><path d="M26 62 H52 M26 100 H52 M26 138 H52 M148 62 H174 M148 100 H174 M148 138 H174" style="stroke:var(--muted);stroke-width:14;stroke-linecap:round"></path><rect x="50" y="34" width="100" height="134" rx="14" style="fill:var(--ink)"></rect><circle cx="70" cy="58" r="10" style="fill:var(--accent)"></circle></svg><h1>Electro <b>Yosr</b></h1><small>Bac Technique · Lab</small></div>
+  <button class="dlapp dl-only" id="b-dlapp" title="Download Electro Yosr as one file that works offline"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Download app</button>
   <nav class="tabs" role="tablist" aria-label="Pages">
     <button role="tab" id="tab-sim" data-view="sim" aria-selected="true">Simulation</button>
     <button role="tab" id="tab-library" data-view="library" aria-selected="false">Library</button>
@@ -244,7 +249,7 @@ td.c,th.c{text-align:center;font-family:var(--f-mono)}
     <div class="boardwrap" id="boardwrap"><canvas id="board" aria-label="Circuit board"></canvas></div>
     <div class="boardfoot"><span id="hint">Pick a component on the left, then click the board to place it.</span><span id="cursor">—</span></div>
     <div class="scopebox">
-      <div class="scopehead"><h3>Oscilloscope</h3><div class="legend" id="legend"></div><select class="tbsel" id="span" aria-label="Oscilloscope time span"><option value="10">10 s</option><option value="2">2 s</option><option value="1">1 s</option><option value="0.2">200 ms</option><option value="0.1">100 ms</option><option value="0.05">50 ms</option><option value="0.02">20 ms</option><option value="0.01">10 ms</option><option value="0.002">2 ms</option></select></div>
+      <div class="scopehead"><h3>Oscilloscope</h3><div class="legend" id="legend"></div><button class="btn dl-only" id="b-scopepng" title="Save the oscilloscope as a PNG image">Save image</button><select class="tbsel" id="span" aria-label="Oscilloscope time span"><option value="10">10 s</option><option value="2">2 s</option><option value="1">1 s</option><option value="0.2">200 ms</option><option value="0.1">100 ms</option><option value="0.05">50 ms</option><option value="0.02">20 ms</option><option value="0.01">10 ms</option><option value="0.002">2 ms</option></select></div>
       <canvas id="scope"></canvas>
     </div>
   </div>
@@ -477,9 +482,10 @@ td.c,th.c{text-align:center;font-family:var(--f-mono)}
 <div class="overlay" id="modal" hidden>
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <h2 id="modal-title">Save / Load circuit</h2>
-    <p class="muted" style="margin:0">Copy this code to keep your circuit. To load one, paste a code here and press Load.</p>
+    <p class="muted" style="margin:0">Download your circuit as a file, or open a circuit file. You can also copy the code below and paste a code here to load it.</p>
+    <div class="btnrow dl-only"><button class="btn primary" id="m-dl">Download circuit file</button><label class="btn" for="m-file">Open circuit file</label><input type="file" id="m-file" accept=".json,.txt,application/json" hidden></div>
     <textarea id="modal-text" aria-label="Circuit code"></textarea>
-    <div class="btnrow"><button class="btn primary" id="m-copy">Copy code</button><button class="btn" id="m-load">Load pasted code</button><button class="btn" id="m-close" style="margin-left:auto">Close</button></div>
+    <div class="btnrow"><button class="btn" id="m-copy">Copy code</button><button class="btn" id="m-load">Load pasted code</button><button class="btn" id="m-close" style="margin-left:auto">Close</button></div>
   </div>
 </div>
 <div class="overlay" id="pic-modal" hidden>
@@ -488,7 +494,7 @@ td.c,th.c{text-align:center;font-family:var(--f-mono)}
     <p class="muted" style="margin:0">Language: MikroPascal (the subset listed in Help → Programming the PIC). Names are not case-sensitive.</p>
     <div class="editor"><pre id="pic-gutter" aria-hidden="true">1</pre><textarea id="pic-code" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Program code"></textarea></div>
     <div class="edstatus" id="pic-status">Press Compile and load to send the program to the PIC.</div>
-    <div class="btnrow"><button class="btn primary" id="pic-compile">Compile and load</button><button class="btn" id="pic-close" style="margin-left:auto">Close</button></div>
+    <div class="btnrow"><button class="btn primary" id="pic-compile">Compile and load</button><button class="btn dl-only" id="pic-dl">Download program (.mpas)</button><label class="btn dl-only" for="pic-file">Open .mpas file</label><input type="file" id="pic-file" accept=".mpas,.pas,.txt" hidden><button class="btn" id="pic-close" style="margin-left:auto">Close</button></div>
   </div>
 </div>
 <div class="toast" id="toast" hidden></div>
@@ -2197,6 +2203,20 @@ function calcs(){const U=parseSI($('#c-u').value),R=parseSI($('#c-r').value);
  else $('#c-led-out').innerHTML='<span class="muted" style="font-size:14px">E must be larger than Vf, and I above 0.</span>';}
 ['#c-u','#c-r','#c-e','#c-vf','#c-i'].forEach(s=>$(s).addEventListener('input',calcs));
 
+/* ---------- downloads ---------- */
+try{if(window.self!==window.top)document.documentElement.classList.add('framed');}catch(e){document.documentElement.classList.add('framed');}
+function dlBlob(name,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);}
+const stamp=()=>new Date().toISOString().slice(0,10);
+$('#b-dlapp').onclick=async()=>{let html=null;
+ try{if(location.protocol.startsWith('http')){const r=await fetch(location.href.split('#')[0],{cache:'no-store'});if(r.ok)html=await r.text();}}catch(e){}
+ if(!html)html='<!doctype html>\n'+document.documentElement.outerHTML.replace(' class="framed"','');
+ dlBlob('electro-yosr.html',new Blob([html],{type:'text/html'}));toast('Downloading electro-yosr.html. Open it in any browser, even offline.');};
+$('#b-scopepng').onclick=()=>{const cv=$('#scope');const out=document.createElement('canvas');out.width=cv.width;out.height=cv.height;const x=out.getContext('2d');x.fillStyle=T.panel;x.fillRect(0,0,out.width,out.height);x.drawImage(cv,0,0);
+ out.toBlob(b=>{if(b){dlBlob(`oscilloscope-${stamp()}.png`,b);toast('Oscilloscope image saved');}},'image/png');};
+$('#m-dl').onclick=()=>{dlBlob(`circuit-${stamp()}.json`,new Blob([serialize()],{type:'application/json'}));toast('Circuit file downloaded');};
+$('#m-file').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{load(String(rd.result));$('#modal').hidden=true;toast(`Opened ${f.name}`);}catch(err){toast('This file is not an Electro Yosr circuit.');}e.target.value='';};rd.readAsText(f);});
+$('#pic-dl').onclick=()=>{const name=(edComp&&edComp.label?edComp.label:'pic')+'-program.mpas';dlBlob(name,new Blob([$('#pic-code').value],{type:'text/plain'}));toast('Program downloaded');};
+$('#pic-file').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{$('#pic-code').value=String(rd.result);updGutter();edStatus('',`Opened ${f.name}. Press Compile and load to send it to the PIC.`);e.target.value='';};rd.readAsText(f);});
 /* ---------- boot ---------- */
 sizeBoard();buildPalette();
 let loaded=false;try{const s=localStorage.getItem('electroyosr.v1')||localStorage.getItem('electrosim.v1');if(s){const d=JSON.parse(s);if(d.c&&d.c.length){load(d);loaded=true;}}}catch(e){}
