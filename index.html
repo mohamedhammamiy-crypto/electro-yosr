@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Electro Yosr: circuit simulator for Bac Technique students, with analog and AC parts, integrated circuits and PIC microcontrollers programmed in MikroPascal.">
+<meta name="description" content="Electro Yosr: circuit simulator for Bac Technique students, with analog and AC parts, integrated circuits and PIC microcontrollers programmed in MikroPascal or mikroC.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22%3E%3Cpath d=%22M26 62H52M26 100H52M26 138H52M148 62H174M148 100H174M148 138H174%22 stroke=%22%2356706f%22 stroke-width=%2214%22 stroke-linecap=%22round%22/%3E%3Crect x=%2250%22 y=%2234%22 width=%22100%22 height=%22134%22 rx=%2214%22 fill=%22%23152a2c%22/%3E%3Ccircle cx=%2270%22 cy=%2258%22 r=%2210%22 fill=%22%23b45420%22/%3E%3C/svg%3E">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Electro Yosr</title>
@@ -274,7 +274,7 @@ td.c,th.c{text-align:center;font-family:var(--f-mono)}
 <section class="view" id="view-help" aria-labelledby="tab-help" hidden>
  <div class="help">
   <nav class="toc" aria-label="Help sections">
-    <a href="#h-start">Getting started</a><a href="#h-tools">Tools and shortcuts</a><a href="#h-measure">Measuring</a><a href="#h-logic">Logic circuits</a><a href="#h-ac">AC and analog</a><a href="#h-ic">Integrated circuits</a><a href="#h-pic">Programming the PIC</a><a href="#h-formulas">Formula sheet</a><a href="#h-calc">Calculators</a><a href="#h-engine">How it calculates</a><a href="#h-limits">Limits of the model</a>
+    <a href="#h-start">Getting started</a><a href="#h-tools">Tools and shortcuts</a><a href="#h-measure">Measuring</a><a href="#h-logic">Logic circuits</a><a href="#h-ac">AC and analog</a><a href="#h-ic">Integrated circuits</a><a href="#h-pic">Programming the PIC</a><a href="#h-c">Programming in mikroC</a><a href="#h-formulas">Formula sheet</a><a href="#h-calc">Calculators</a><a href="#h-engine">How it calculates</a><a href="#h-limits">Limits of the model</a>
   </nav>
   <div class="doc">
    <section id="h-start"><h2>Getting started</h2>
@@ -428,6 +428,33 @@ td.c,th.c{text-align:center;font-family:var(--f-mono)}
      <li>Not supported yet: PWM (CCP), EEPROM, I²C and SPI, custom LCD characters, Timer1 external clock, records, pointers and <span class="mono">var</span> parameters.</li>
     </ul>
    </section>
+   <section id="h-c"><h2>Programming in mikroC</h2>
+    <p>In the program editor, choose <b>mikroC (C language)</b> in the language list. Every example program exists in both languages: switch the list while an example is shown and it is translated. Your choice is saved with the PIC when you press <b>Compile and load</b>. Timers, interrupts, the LCD, the UART, text and real numbers work exactly as in MikroPascal.</p>
+    <div class="tablewrap"><table>
+     <thead><tr><th>Feature</th><th>mikroC example</th></tr></thead>
+     <tbody>
+      <tr><td>Program structure</td><td class="mono">void main() { … }</td></tr>
+      <tr><td>Types</td><td class="mono">unsigned char  char  short  int  unsigned int  long  unsigned long  float  bit</td></tr>
+      <tr><td>Arrays and text</td><td class="mono">unsigned char t[8];  char txt[16];  const unsigned short seg[10] = {0x3F, …};</td></tr>
+      <tr><td>Ports and bits</td><td class="mono">TRISB = 0x00;  PORTB.F0 = 1;  RB3_bit = 0;  INTCON.GIE = 1;</td></tr>
+      <tr><td>Pin names</td><td class="mono">sbit LED at RB0_bit;   #define BUZZER PORTC.F2</td></tr>
+      <tr><td>Conditions</td><td class="mono">if (…) … else …;  switch (n) { case 1: …; break; default: … }</td></tr>
+      <tr><td>Loops</td><td class="mono">while (1) { … }   do { … } while (…);   for (i = 0; i &lt; 8; i++)</td></tr>
+      <tr><td>Jumps</td><td class="mono">break;  continue;  return x;</td></tr>
+      <tr><td>Functions</td><td class="mono">unsigned int carre(unsigned char x) { return x * x; }</td></tr>
+      <tr><td>Interrupt routine</td><td class="mono">void interrupt() { if (INTCON.T0IF) { INTCON.T0IF = 0; … } }</td></tr>
+      <tr><td>Operators</td><td class="mono">+ - * / % ++ -- += -= &amp; | ^ ~ &lt;&lt; &gt;&gt; == != &lt; &gt; &amp;&amp; || ! ?:  (float) casts</td></tr>
+      <tr><td>Numbers</td><td class="mono">255  0xFF  0b11111111  3.14  'A'  "text"</td></tr>
+      <tr><td>Libraries</td><td class="mono">Delay_ms  ADC_Read  Lcd_Init  Lcd_Out  Lcd_Cmd  UART1_Init  UART1_Write_Text  UART1_Read  ByteToStr  IntToStr  FloatToStr  strcpy  strcat  strcmp  strlen  Button</td></tr>
+     </tbody></table></div>
+    <h3>Differences from a real mikroC compiler</h3>
+    <ul>
+     <li>Names are not case-sensitive here (<span class="mono">PORTB</span> and <span class="mono">portb</span> are the same). The real compiler is case-sensitive for your own variables.</li>
+     <li><span class="mono">10 / 4</span> gives 2 (integer division) unless one value is a <span class="mono">float</span>: write <span class="mono">10.0 / 4</span> or <span class="mono">(float)n / 4</span>.</li>
+     <li>Write <span class="mono">i++</span> and <span class="mono">i--</span> as separate statements, not inside another expression.</li>
+     <li>Not supported: pointers (except <span class="mono">&amp;PORTA</span> in Button), structures, <span class="mono">#define</span> with parameters, <span class="mono">#include</span> of your own files (library includes are ignored), <span class="mono">goto</span>, <span class="mono">sizeof</span>.</li>
+    </ul>
+   </section>
    <section id="h-formulas"><h2>Formula sheet</h2>
     <div class="tablewrap"><table>
      <thead><tr><th>Law</th><th>Formula</th></tr></thead>
@@ -490,11 +517,11 @@ td.c,th.c{text-align:center;font-family:var(--f-mono)}
 </div>
 <div class="overlay" id="pic-modal" hidden>
   <div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="pic-title">
-    <div class="edhead"><h2 id="pic-title">Program</h2><select class="tbsel" id="pic-ex" aria-label="Load an example program"><option value="">Load an example program…</option></select></div>
-    <p class="muted" style="margin:0">Language: MikroPascal (the subset listed in Help → Programming the PIC). Names are not case-sensitive.</p>
+    <div class="edhead"><h2 id="pic-title">Program</h2><div class="btnrow" style="margin:0"><select class="tbsel" id="pic-lang" aria-label="Programming language"><option value="MikroPascal">MikroPascal</option><option value="mikroC">mikroC (C language)</option></select><select class="tbsel" id="pic-ex" aria-label="Load an example program"><option value="">Load an example program…</option></select></div></div>
+    <p class="muted" style="margin:0" id="pic-langnote"></p>
     <div class="editor"><pre id="pic-gutter" aria-hidden="true">1</pre><textarea id="pic-code" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Program code"></textarea></div>
     <div class="edstatus" id="pic-status">Press Compile and load to send the program to the PIC.</div>
-    <div class="btnrow"><button class="btn primary" id="pic-compile">Compile and load</button><button class="btn dl-only" id="pic-dl">Download program (.mpas)</button><label class="btn dl-only" for="pic-file">Open .mpas file</label><input type="file" id="pic-file" accept=".mpas,.pas,.txt" hidden><button class="btn" id="pic-close" style="margin-left:auto">Close</button></div>
+    <div class="btnrow"><button class="btn primary" id="pic-compile">Compile and load</button><button class="btn dl-only" id="pic-dl">Download program</button><label class="btn dl-only" for="pic-file">Open program file</label><input type="file" id="pic-file" accept=".mpas,.pas,.c,.txt" hidden><button class="btn" id="pic-close" style="margin-left:auto">Close</button></div>
   </div>
 </div>
 <div class="toast" id="toast" hidden></div>
@@ -827,7 +854,7 @@ Object.assign(INFO,{
  ic7486:{d:'Four 2-input exclusive-OR gates in one 14-pin TTL package.',f:'Y = A ⊕ B',v:'Same pinout as the 74LS00 and 74LS08\nVCC = 14 · GND = 7',t:'An XOR with one input at 1 works as a controlled inverter.'},
  cd4511:{d:'CMOS BCD to 7-segment decoder and driver. It turns the 4-bit code DCBA (0 to 9) into the segments a to g of a common-cathode display. Codes 10 to 15 blank the display.',f:'N = 8D + 4C + 2B + A',v:'A=7 B=1 C=2 D=6 · a=13 b=12 c=11 d=10 e=9 f=15 g=14\nLT=3 BI=4 LE=5 · VDD=16 VSS=8',t:'LT and BI must be at 1 and LE at 0. In the simulator they default to that if left open. The 4511 draws 6 and 9 without their tails.'},
  ne555:{d:'Timer in an 8-pin package. In astable mode it gives a square wave; in monostable mode a single pulse.',f:'Astable: tH = 0.693 (R1 + R2) C\ntL = 0.693 R2 C\nf = 1.44 / ((R1 + 2 R2) C)',v:'1 GND · 2 TRIG · 3 OUT · 4 RESET\n5 CV · 6 THR · 7 DIS · 8 VCC',t:'R1 = 10 kΩ, R2 = 68 kΩ, C = 10 µF gives about 1 Hz. Load the NE555 example.'},
- pic876:{d:'Microchip 8-bit microcontroller, 28 pins: 22 input/output pins on PORTA (RA0–RA5), PORTB (RB0–RB7) and PORTC (RC0–RC7), and a 10-bit analog converter on AN0–AN4, Timer0/1/2, interrupts and a UART (RC6 = TX, RC7 = RX). Select it and press Edit program to write MikroPascal code.',f:'TRISx bit 0 → output, 1 → input\nN = ADC_Read(0) → 0…1023 for 0…5 V',v:'VDD = 20 · VSS = 8 and 19 · MCLR = 1\nOSC1 OSC2 = 9 10 · RA = 2–7\nRC = 11–18 · RB = 21–28',t:'Each pin can deliver 25 mA at most. Always drive an LED through a 330 Ω resistor.'},
+ pic876:{d:'Microchip 8-bit microcontroller, 28 pins: 22 input/output pins on PORTA (RA0–RA5), PORTB (RB0–RB7) and PORTC (RC0–RC7), and a 10-bit analog converter on AN0–AN4, Timer0/1/2, interrupts and a UART (RC6 = TX, RC7 = RX). Select it and press Edit program to write the program in MikroPascal or mikroC.',f:'TRISx bit 0 → output, 1 → input\nN = ADC_Read(0) → 0…1023 for 0…5 V',v:'VDD = 20 · VSS = 8 and 19 · MCLR = 1\nOSC1 OSC2 = 9 10 · RA = 2–7\nRC = 11–18 · RB = 21–28',t:'Each pin can deliver 25 mA at most. Always drive an LED through a 330 Ω resistor.'},
  lcd:{d:'Alphanumeric LCD module with 2 lines of 16 characters (HD44780 controller), like the LM016L in Proteus. The PIC drives it in 4-bit mode with the Lcd library: RS, E and D4 to D7.',f:'Lcd_Init();\nLcd_Out(1, 1, \'Bonjour\');\nLcd_Cmd(_LCD_CLEAR);',v:'VSS=1 VDD=2 VEE=3 RS=4 RW=5 E=6\nD0–D7 = 7–14 (only D4–D7 are used)',t:'Connect VSS to ground, VDD to +5 V and RW to ground (or leave it open). The pins must match the LCD_RS … LCD_D7 declarations of the program.'},
  vterm:{d:'Shows the text a PIC sends on its serial port and lets you type text back, like the virtual terminal in Proteus. Select it to read the full text and to send.',f:'Byte time = 10 / baud\n9600 baud → about 1 ms per character',v:'TXD → PIC RX (RC7)\nRXD ← PIC TX (RC6)',t:'Set the same baud rate as UART1_Init in the program, otherwise the text is unreadable.'},
  pic84:{d:'Classic 18-pin Microchip microcontroller with 13 input/output pins: PORTA (RA0–RA4) and PORTB (RB0–RB7). It has Timer0 and the RB0/INT and RB4–RB7 interrupts, but no analog converter, Timer1/2 or UART.',f:'TRISx bit 0 → output, 1 → input',v:'VDD = 14 · VSS = 5 · MCLR = 4 · OSC = 15 16\nRA0 = 17 RA1 = 18 RA2 = 1 RA3 = 2 RA4 = 3\nRB0–RB7 = 6–13',t:'Programs written for it also run on the PIC16F876A, which has the same PORTA and PORTB names.'},
@@ -1005,15 +1032,15 @@ const BITN={
  status:{c:0,dc:1,z:2}};
 const GBITS={};for(const r in BITN)for(const b in BITN[r])if(!GBITS[b+'_bit'])GBITS[b+'_bit']=[r,BITN[r][b]];
 const LCDK={_lcd_first_row:0x80,_lcd_second_row:0xC0,_lcd_third_row:0x94,_lcd_fourth_row:0xD4,_lcd_clear:1,_lcd_return_home:2,_lcd_cursor_off:0x0C,_lcd_underline_on:0x0E,_lcd_blink_cursor_on:0x0F,_lcd_move_cursor_left:0x10,_lcd_move_cursor_right:0x14,_lcd_turn_on:0x0C,_lcd_turn_off:0x08,_lcd_shift_left:0x18,_lcd_shift_right:0x1C};
-const BFN={adc_read:1,lo:1,hi:1,testbit:2,abs:1,sqrt:1,sin:1,cos:1,tan:1,exp:1,ln:1,log:1,trunc:1,round:1,chr:1,ord:1,length:1,strlen:1,strtoint:1,strtoword:1,strtofloat:1,ltrim:1,rtrim:1,
+const BFN={adc_read:1,lo:1,hi:1,testbit:2,abs:1,sqrt:1,sin:1,cos:1,tan:1,exp:1,ln:1,log:1,trunc:1,round:1,chr:1,ord:1,length:1,strlen:1,strtoint:1,strtoword:1,strtofloat:1,ltrim:1,rtrim:1,strcmp:2,button:4,
  uart1_read:0,uart1_data_ready:0,uart1_tx_idle:0,usart_read:0,usart_data_ready:0};
 const P_=(min,max,refs=[])=>({min,max,refs});
 const BPROC={delay_ms:P_(1,1),delay_us:P_(1,1),vdelay_ms:P_(1,1),delay_1sec:P_(0,0),adc_init:P_(0,0),nop:P_(0,0),exit:P_(0,0),
  inc:P_(1,2,[0]),dec:P_(1,2,[0]),setbit:P_(2,2,[0]),clearbit:P_(2,2,[0]),
- bytetostr:P_(2,2,[1]),shorttostr:P_(2,2,[1]),wordtostr:P_(2,2,[1]),inttostr:P_(2,2,[1]),longinttostr:P_(2,2,[1]),longwordtostr:P_(2,2,[1]),floattostr:P_(2,2,[1]),ltrim:P_(1,1,[0]),rtrim:P_(1,1,[0]),
+ bytetostr:P_(2,2,[1]),shorttostr:P_(2,2,[1]),wordtostr:P_(2,2,[1]),inttostr:P_(2,2,[1]),longinttostr:P_(2,2,[1]),longwordtostr:P_(2,2,[1]),floattostr:P_(2,2,[1]),longtostr:P_(2,2,[1]),ltrim:P_(1,1,[0]),rtrim:P_(1,1,[0]),strcpy:P_(2,2,[0]),strcat:P_(2,2,[0]),
  lcd_init:P_(0,0),lcd_out:P_(3,3),lcd_out_cp:P_(1,1),lcd_chr:P_(3,3),lcd_chr_cp:P_(1,1),lcd_cmd:P_(1,1),
  uart1_init:P_(1,1),uart1_write:P_(1,1),uart1_write_text:P_(1,1),usart_init:P_(1,1),usart_write:P_(1,1)};
-const STEP=1e-6, EXIT={exit:true};
+const STEP=1e-6, EXIT={exit:true}, BRK={brk:true}, CONT={cont:true};
 const KNOWN_SFR=new Set(['porta','portb','portc','trisa','trisb','trisc','adcon0','adcon1','intcon','option_reg','cmcon','status','pir1','pie1','pir2','pie2','t1con','t2con','tmr0','tmr1l','tmr1h','tmr2','pr2','ccp1con','ccp2con','ccpr1l','txsta','rcsta','txreg','rcreg','spbrg','sspcon','eecon1','eedata','eeadr','pcon','adresh','adresl','cvrcon']);
 
 function plex(src){const toks=[];let i=0,line=1;const n=src.length;
@@ -1109,7 +1136,7 @@ function pparse(toks){let p=0;
   if(acc('[')){d.index=expr();exp(']');}
   if(is('.')){const nt=toks[p+1];if(nt&&(nt.t==='num'||nt.t==='id')){p+=2;
     if(nt.t==='num'){if(nt.real)fail('bit number must be 0 to 7',nt);d.bit=nt.v;}
-    else{const m=/^[bf](\d+)$/.exec(nt.v);if(m)d.bit=+m[1];else{d.bitName=nt.v;d.bitRaw=nt.raw;}}
+    else{const m=/^(?:[bf]|r[a-e])(\d+)$/.exec(nt.v);if(m)d.bit=+m[1];else{d.bitName=nt.v;d.bitRaw=nt.raw;}}
     if(d.bit!=null&&d.bit>15)fail('bit number must be 0 to 15',nt);}}
   return d;}
  function args(){const a=[];if(acc('(')){if(!is(')')){a.push(expr());while(acc(','))a.push(expr());}exp(')');}return a;}
@@ -1148,8 +1175,158 @@ function pparse(toks){let p=0;
  exp('begin');const body=stmtList();exp('end');if(!acc('.'))fail('expected "." after the final "end"');
  return {globals,consts,procs,body};}
 
+/* ---------- mikroC front end (same AST as MikroPascal) ---------- */
+const CKW=new Set(['void','char','short','int','long','float','double','unsigned','signed','bit','sbit','const','volatile','static','register','extern','code','if','else','while','do','for','switch','case','default','break','continue','return','sizeof']);
+const CTYPE=new Set(['void','char','short','int','long','float','double','unsigned','signed','bit','sbit']);
+const CQUAL=new Set(['const','volatile','static','register','extern','code']);
+const CREALFN=new Set(['sqrt','sin','cos','tan','exp','ln','log','strtofloat']);
+function clex(src){const defs={};const lines=src.replace(/\r/g,'').split('\n');
+ for(let i=0;i<lines.length;i++){const m=/^\s*#\s*(\w+)\s*(.*)$/.exec(lines[i]);if(!m)continue;
+  if(m[1]==='define'){const mm=/^(\w+)(\()?\s*(.*)$/.exec(m[2]);if(!mm)throw new PErr(i+1,'#define needs a name');if(mm[2])throw new PErr(i+1,'#define with parameters is not supported');defs[mm[1].toLowerCase()]=mm[3].replace(/\/\/.*$/,'').replace(/\/\*.*?\*\//g,'');}
+  lines[i]='';}
+ const raw=ctok(lines.join('\n'));const out=[];
+ const expand=(t,depth)=>{if(t.t==='id'&&defs[t.v]!==undefined){if(depth>8)throw new PErr(t.line,`#define ${t.raw} refers to itself`);for(const x of ctok(defs[t.v]).slice(0,-1))expand({...x,line:t.line},depth+1);}else out.push(t);};
+ for(const t of raw)expand(t,0);return out;}
+function ctok(src){const toks=[];let i=0,line=1;const n=src.length;
+ const esc=c=>({n:'\n',r:'\r',t:'\t','0':'\0','\\':'\\',"'":"'",'"':'"'}[c]??c);
+ const R=re=>{re.lastIndex=i;const m=re.exec(src);return m?m[0]:null;};
+ const reHex=/0x[0-9a-f]+[ul]*/iy,reBin=/0b[01]+[ul]*/iy,reReal=/(?:\d+\.\d*|\.\d+)(?:e[+-]?\d+)?f?|\d+e[+-]?\d+f?/iy,reOct=/0[0-7]+[ul]*/iy,reDec=/\d+[ul]*/iy,reId=/[a-z_]\w*/iy;
+ const SYMS=['<<=','>>=','++','--','+=','-=','*=','/=','%=','&=','|=','^=','<<','>>','<=','>=','==','!=','&&','||'];
+ const push=(t,v,raw,extra)=>{toks.push({t,v,raw,line,...extra});i+=raw.length;};
+ while(i<n){const ch=src[i];
+  if(ch==='\n'){line++;i++;continue;}
+  if(ch===' '||ch==='\t'||ch==='\r'){i++;continue;}
+  if(ch==='/'&&src[i+1]==='/'){while(i<n&&src[i]!=='\n')i++;continue;}
+  if(ch==='/'&&src[i+1]==='*'){const l0=line;i+=2;while(i<n&&!(src[i]==='*'&&src[i+1]==='/')){if(src[i]==='\n')line++;i++;}if(i>=n)throw new PErr(l0,'this comment "/*" is never closed with "*/"');i+=2;continue;}
+  if(ch==='"'){let j=i+1,s='';while(j<n&&src[j]!=='"'){if(src[j]==='\n')throw new PErr(line,'this text is never closed with "');if(src[j]==='\\'){s+=esc(src[j+1]);j+=2;}else s+=src[j++];}if(j>=n)throw new PErr(line,'this text is never closed with "');
+   toks.push({t:'str',v:s,raw:src.slice(i,j+1),line});i=j+1;continue;}
+  if(ch==="'"){let j=i+1,c;if(src[j]==='\\'){c=esc(src[j+1]);j+=2;}else c=src[j++];if(src[j]!=="'")throw new PErr(line,"a character must be written like 'A'");toks.push({t:'num',v:c.charCodeAt(0),raw:src.slice(i,j+1),line});i=j+1;continue;}
+  let m;
+  if(m=R(reHex)){push('num',parseInt(m.replace(/[ul]+$/i,'').slice(2),16),m);continue;}
+  if(m=R(reBin)){push('num',parseInt(m.replace(/[ul]+$/i,'').slice(2),2),m);continue;}
+  if(m=R(reReal)){push('num',parseFloat(m),m,{real:true});continue;}
+  if(m=R(reOct)){push('num',parseInt(m.replace(/[ul]+$/i,'').slice(1),8),m);continue;}
+  if(m=R(reDec)){push('num',parseInt(m,10),m);continue;}
+  if(m=R(reId)){const w=m.toLowerCase();push(CKW.has(w)?w:'id',w,m);continue;}
+  const s3=SYMS.find(x=>src.startsWith(x,i));if(s3){push('sym',s3,s3);continue;}
+  if("+-*/%&|^~!=<>?:;,.()[]{}".includes(ch)){push('sym',ch,ch);continue;}
+  throw new PErr(line,`unexpected character "${ch}"`);}
+ toks.push({t:'eof',v:'',raw:'end of program',line});return toks;}
+
+function pparseC(toks){let p=0;
+ const cur=()=>toks[p],is=v=>{const t=toks[p];return t.t===v||(t.t==='sym'&&t.v===v);},acc=v=>{if(is(v)){p++;return true;}return false;};
+ const fail=(msg,t=toks[p])=>{throw new PErr(t.line,msg);};
+ const exp=(v,what)=>{if(!is(v))fail(`expected ${what||'"'+v+'"'} but found "${cur().raw}"`);return toks[p++];};
+ const ident=(what='a name')=>{if(cur().t!=='id')fail(`expected ${what} but found "${cur().raw}"`);return toks[p++];};
+ const consts={},globals={},procs={},init=[];let locals=null,fnName=null,loops=0,switches=0,mainBody=null;
+ const tyOf=nm=>(locals&&locals[nm])||globals[nm]||null;
+ const isTypeStart=()=>{const t=cur();return CTYPE.has(t.t)||CQUAL.has(t.t);};
+ function typeSpec(){let isConst=false,uns=null,base=null,longs=0,short=false;
+  for(;;){const t=cur().t;if(CQUAL.has(t)){if(t==='const')isConst=true;p++;continue;}
+   if(t==='unsigned'){uns=true;p++;continue;}if(t==='signed'){uns=false;p++;continue;}
+   if(t==='long'){longs++;p++;continue;}if(t==='short'){short=true;p++;continue;}
+   if(['void','char','int','float','double','bit','sbit'].includes(t)){if(base)fail(`two types in one declaration ("${cur().raw}")`);base=t;p++;continue;}break;}
+  if(!base&&uns===null&&!longs&&!short)fail(`expected a type such as unsigned char, int or float but found "${cur().raw}"`);
+  let b;if(base==='void')b='void';else if(base==='float'||base==='double')b='real';else if(base==='bit')b='bit';else if(base==='sbit')b='sbit';
+  else if(longs)b=uns?'dword':'longint';else if(short)b=uns===false?'short':(uns?'byte':'short');else if(base==='char')b=uns===false?'short':'byte';else b=uns?'word':'integer';
+  return {base:b,isConst,plainChar:base==='char'&&uns===null};}
+ function designator(t){const d={k:'ref',name:t.v,raw:t.raw,line:t.line,index:null,bit:null,bitName:null};
+  if(acc('[')){d.index=expr();exp(']');}
+  if(is('.')){const nt=toks[p+1];if(nt&&(nt.t==='num'||nt.t==='id')){p+=2;if(nt.t==='num'){if(nt.real)fail('bit number must be 0 to 7',nt);d.bit=nt.v;}
+    else{const m=/^(?:[bf]|r[a-e])(\d+)$/.exec(nt.v);if(m)d.bit=+m[1];else{d.bitName=nt.v;d.bitRaw=nt.raw;}}if(d.bit!=null&&d.bit>15)fail('bit number must be 0 to 15',nt);}}
+  const ty=tyOf(d.name);d.real=!!(ty&&!ty.arr&&REALT.has(ty.base)&&d.bit==null);return d;}
+ function args(){const a=[];exp('(');if(!is(')')){a.push(expr());while(acc(','))a.push(expr());}exp(')');return a;}
+ const BOP={'||':'lor','&&':'land','|':'or','^':'xor','&':'and','==':'=','!=':'<>','<':'<','>':'>','<=':'<=','>=':'>=','<<':'shl','>>':'shr','+':'+','-':'-','*':'*','/':'/','%':'mod'};
+ const LEVELS=[['||'],['&&'],['|'],['^'],['&'],['==','!='],['<','>','<=','>='],['<<','>>'],['+','-'],['*','/','%']];
+ function expr(){const c=bin(0);if(acc('?')){const a=expr();exp(':');const b=expr();return {k:'cond',c,a,b,line:c.line,real:a.real||b.real};}return c;}
+ function bin(lv){if(lv>=LEVELS.length)return unary();let l=bin(lv+1);
+  for(;;){const t=cur();if(t.t!=='sym'||!LEVELS[lv].includes(t.v))break;p++;const r=bin(lv+1);let op=BOP[t.v];const real=['+','-','*','/'].includes(t.v)&&(l.real||r.real);
+   if(t.v==='/'&&!real)op='div';l={k:'bin',op,l,r,line:l.line,real};}return l;}
+ function unary(){const t=cur();
+  if(acc('!'))return {k:'un',op:'lnot',e:unary(),line:t.line};
+  if(acc('~'))return {k:'un',op:'not',e:unary(),line:t.line};
+  if(acc('-')){const e=unary();return {k:'un',op:'neg',e,line:t.line,real:e.real};}
+  if(acc('+'))return unary();
+  if(acc('&'))return unary();
+  if(is('++')||is('--'))fail(`write ${t.v} as a separate statement, for example i++;`);
+  if(is('(')&&(CTYPE.has(toks[p+1].t)||CQUAL.has(toks[p+1].t))){p++;const ty=typeSpec();exp(')');const e=unary();return {k:'cast',ty,e,line:t.line,real:REALT.has(ty.base)};}
+  if(t.t==='sizeof')fail('sizeof is not supported');
+  return primary();}
+ function primary(){const t=cur();
+  if(t.t==='num'){p++;return {k:'num',v:t.v,line:t.line,real:!!t.real};}
+  if(t.t==='str'){p++;return {k:'str',v:t.v,line:t.line};}
+  if(acc('(')){const e=expr();exp(')');return e;}
+  if(t.t==='id'){p++;let e;if(is('(')){const a=args();const pr=procs[t.v];e={k:'fcall',name:t.v,raw:t.raw,args:a,line:t.line,real:CREALFN.has(t.v)||!!(pr&&pr.rty&&REALT.has(pr.rty.base))};}else e=designator(t);
+   if(is('++')||is('--'))fail(`write ${t.raw}${cur().v} as a separate statement, not inside an expression`);return e;}
+  fail(`expected a value but found "${t.raw}"`);}
+ function decl(scope,out){const spec=typeSpec();if(spec.base==='void')fail('a variable cannot be void');
+  do{const nm=ident('a variable name');if(scope[nm.v]||consts[nm.v]!==undefined)fail(`"${nm.raw}" is declared twice`,nm);
+   if(spec.base==='sbit'){if(!(cur().t==='id'&&cur().v==='at'))fail('write sbit NAME at RB0_bit;');p++;const at=designator(ident('a pin such as RB0_bit'));scope[nm.v]={base:'sbit',at};continue;}
+   let ty={base:spec.base};
+   if(acc('[')){let len=null;if(!is(']'))len=pnum(cexpr());exp(']');
+    let lst=null,str=null;if(acc('=')){if(cur().t==='str'){str=toks[p++].v;}else{exp('{');lst=[];if(!is('}')){lst.push(cexpr());while(acc(',')){if(is('}'))break;lst.push(cexpr());}}exp('}');}}
+    if(len==null)len=lst?lst.length:str!=null?str.length+1:fail(`give the size of "${nm.raw}", for example ${nm.raw}[8]`,nm);
+    if(len<1||len>1024)fail('array size must be 1 to 1024',nm);
+    if(spec.plainChar&&!lst){ty={base:'string',len:len-1>0?len-1:1};scope[nm.v]=ty;if(str!=null)out.push({k:'assign',d:{k:'ref',name:nm.v,raw:nm.raw,line:nm.line,index:null,bit:null},e:{k:'str',v:str},line:nm.line});continue;}
+    const vals=(lst||[...(str||'')].map(c=>c.charCodeAt(0))).map(v=>pwrap(spec.base,v));while(vals.length<len)vals.push(0);if(vals.length>len)fail(`"${nm.raw}" has more values than its size ${len}`,nm);
+    if(spec.isConst&&(lst||str!=null)){consts[nm.v]={arr:vals,lo:0};continue;}
+    ty={arr:true,lo:0,len,el:spec.base,initArr:(lst||str!=null)?vals:null};scope[nm.v]=ty;continue;}
+   if(acc('=')){const e=expr();if(spec.isConst&&scope===globals){try{consts[nm.v]=pwrap(spec.base,constEval(e));continue;}catch(err){}}
+    scope[nm.v]=ty;out.push({k:'assign',d:{k:'ref',name:nm.v,raw:nm.raw,line:nm.line,index:null,bit:null},e,line:nm.line});continue;}
+   scope[nm.v]=ty;}while(acc(','));exp(';');}
+ function constEval(e){switch(e.k){case 'num':return e.v;case 'str':return e.v;
+   case 'ref':if(!e.index&&e.bit==null&&(typeof consts[e.name]==='number'))return consts[e.name];if(LCDK[e.name]!==undefined)return LCDK[e.name];throw new PErr(e.line,`"${e.raw}" is not a constant value`);
+   case 'un':{const v=constEval(e.e);return e.op==='neg'?-pnum(v):e.op==='lnot'?(ptrue(v)?0:1):~pnum(v);}
+   case 'cast':return pwrap(e.ty.base,constEval(e.e));
+   case 'bin':{if(e.op==='land')return ptrue(constEval(e.l))&&ptrue(constEval(e.r))?1:0;if(e.op==='lor')return ptrue(constEval(e.l))||ptrue(constEval(e.r))?1:0;return pnum(pbin(e.op,constEval(e.l),constEval(e.r),e.line));}}
+  throw new PErr(e.line,'expected a constant value');}
+ const cexpr=()=>{const e=expr();return constEval(e);};
+ const one=(d,line,op)=>({k:'assign',d,e:{k:'bin',op,l:d,r:{k:'num',v:1},line},line});
+ function simple(){const t=cur(),line=t.line;
+  if(is('++')||is('--')){p++;const d=designator(ident('a variable'));return one(d,line,t.v==='++'?'+':'-');}
+  const id=ident('a statement');if(is('('))return {k:'call',name:id.v,raw:id.raw,args:args(),line};
+  const d=designator(id);const s=cur();
+  if(acc('='))return {k:'assign',d,e:expr(),line};
+  if(acc('++'))return one(d,line,'+');if(acc('--'))return one(d,line,'-');
+  const CO={'+=':'+','-=':'-','*=':'*','/=':'/','%=':'mod','&=':'and','|=':'or','^=':'xor','<<=':'shl','>>=':'shr'};
+  if(s.t==='sym'&&CO[s.v]){p++;const r=expr();let op=CO[s.v];if(op==='/'&&!(d.real||r.real))op='div';return {k:'assign',d,e:{k:'bin',op,l:d,r,line,real:d.real||r.real},line};}
+  if(is('=='))fail(`use "=" to give a value to "${id.raw}" ("==" only compares)`);
+  fail(`expected "=", "++" or "(" after "${id.raw}" but found "${s.raw}"`);}
+ function block(){exp('{');const list=[];while(!is('}')){if(is('eof'))fail('a "{" is never closed with "}"');list.push(...stmts());}exp('}');return {k:'block',list,line:0};}
+ function stmts(){if(isTypeStart()){const out=[];decl(locals||globals,out);return out;}return [stmt()];}
+ function stmt(){const t=cur(),line=t.line;
+  if(is('{'))return block();
+  if(acc(';'))return {k:'block',list:[],line};
+  if(acc('if')){exp('(');const c=expr();exp(')');const a=stmt();let b=null;if(acc('else'))b=stmt();return {k:'if',c,a,b,line};}
+  if(acc('while')){exp('(');const c=expr();exp(')');loops++;const body=stmt();loops--;return {k:'while',c,body,line};}
+  if(acc('do')){loops++;const body=stmt();loops--;exp('while');exp('(');const c=expr();exp(')');exp(';');return {k:'repeat',list:[body],c:{k:'un',op:'lnot',e:c,line},line};}
+  if(acc('for')){exp('(');const initS=[];if(!is(';')){if(isTypeStart())decl(locals||globals,initS);else{initS.push(simple());while(acc(','))initS.push(simple());exp(';');}}else exp(';');
+   const c=is(';')?null:expr();exp(';');const step=[];if(!is(')')){step.push(simple());while(acc(','))step.push(simple());}exp(')');loops++;const body=stmt();loops--;return {k:'cfor',init:initS,c,step,body,line};}
+  if(acc('switch')){exp('(');const e=expr();exp(')');exp('{');const body=[],labels=[];let dflt=-1;switches++;
+   while(!is('}')){if(acc('case')){const v=pnum(cexpr());exp(':');labels.push([v,body.length]);continue;}if(acc('default')){exp(':');dflt=body.length;continue;}if(is('eof'))fail('a "{" is never closed with "}"');body.push(...stmts());}
+   exp('}');switches--;return {k:'switch',e,labels,dflt,body,line};}
+  if(acc('break')){if(!loops&&!switches)fail('"break" must be inside a loop or a switch',t);exp(';');return {k:'brk',line};}
+  if(acc('continue')){if(!loops)fail('"continue" must be inside a loop',t);exp(';');return {k:'cont',line};}
+  if(acc('return')){let e=null;if(!is(';'))e=expr();exp(';');return {k:'ret',e,line};}
+  if(is('else'))fail('"else" without a matching "if"');
+  const s=simple();if(!is(';'))throw new PErr(toks[p-1].line,`missing ";" before "${cur().raw}"`);p++;return s;}
+ while(!is('eof')){const spec0=p;const spec=typeSpec();
+  if(cur().t==='id'&&toks[p+1]&&toks[p+1].t==='sym'&&toks[p+1].v==='('){const nm=toks[p++];p++;const params=[];
+   if(!is(')')){if(cur().t==='void'&&toks[p+1].v===')')p++;else do{const ps=typeSpec();const pn=ident('a parameter name');if(acc('[')){exp(']');fail('array parameters are not supported',pn);}params.push({name:pn.v,ty:{base:ps.base}});}while(acc(','));}
+   exp(')');while(cur().t==='id'&&['iv','ics','org'].includes(cur().v)){p++;while(!is('{')&&!is(';')&&!is('eof'))p++;}
+   if(acc(';'))continue;
+   if(nm.v==='main'){if(mainBody)fail('"main" is written twice',nm);locals=null;fnName=null;mainBody=block();continue;}
+   if(procs[nm.v])fail(`"${nm.raw}" is written twice`,nm);
+   if(nm.v==='interrupt'&&params.length)fail('the interrupt routine must be "void interrupt()" with no parameters',nm);
+   const isFn=spec.base!=='void';const L={};for(const q of params)L[q.name]=q.ty;if(isFn)L.result={base:spec.base};
+   const P={name:nm.v,raw:nm.raw,params,locals:L,isFn,rty:isFn?{base:spec.base}:null,body:[],line:nm.line};procs[nm.v]=P;
+   locals=L;fnName=nm.v;P.body=block().list;locals=null;fnName=null;continue;}
+  p=spec0;decl(globals,init);}
+ if(!mainBody)fail('the program needs a "void main() { … }" function');
+ return {globals,consts,procs,body:init.concat(mainBody.list),lang:'c'};}
+
 const LCD_NAMES=['lcd_rs','lcd_en','lcd_d4','lcd_d5','lcd_d6','lcd_d7'];
-function presolve(P,d){const SF=new Set(d.sfr);
+function presolve(P,d){const SF=new Set(d.sfr);const isC=P.lang==='c';
  const E=(line,msg)=>{throw new PErr(line,msg);};
  const usesLcd={v:false},usesUart={v:false};
  const bitOf=(r)=>{if(!r.bitName)return;const tbl=BITN[r.name];if(!tbl||tbl[r.bitName]===undefined)E(r.line,`"${r.raw}.${r.bitRaw}" is not a known bit. Use a bit number such as ${r.raw}.0`);r.bit=tbl[r.bitName];};
@@ -1157,7 +1334,7 @@ function presolve(P,d){const SF=new Set(d.sfr);
   const ref=(r,lhs)=>{const nm=r.name,ty=scope[nm]||P.globals[nm];
    if(ty){if(r.bitName)E(r.line,`"${r.raw}" is a variable: use a bit number such as ${r.raw}.0`);
     if(ty.at){ref(ty.at,lhs);}
-    if(ty.arr&&!r.index)E(r.line,`"${r.raw}" is an array: write ${r.raw}[index]`);if(!ty.arr&&ty.base!=='string'&&r.index)E(r.line,`"${r.raw}" is not an array`);}
+    if(ty.arr&&!r.index&&!isC)E(r.line,`"${r.raw}" is an array: write ${r.raw}[index]`);if(!ty.arr&&ty.base!=='string'&&r.index)E(r.line,`"${r.raw}" is not an array`);}
    else if(lhs&&nm===fnName){}
    else if(P.consts[nm]!==undefined){if(lhs)E(r.line,`"${r.raw}" is a constant and cannot be changed`);const c=P.consts[nm];if(typeof c==='object'&&!r.index)E(r.line,`"${r.raw}" is a table: write ${r.raw}[index]`);}
    else if(LCDK[nm]!==undefined){if(lhs)E(r.line,`"${r.raw}" is a constant and cannot be changed`);}
@@ -1168,7 +1345,7 @@ function presolve(P,d){const SF=new Set(d.sfr);
    else if(KNOWN_SFR.has(nm))E(r.line,`the ${nm.toUpperCase()} register is not available on the ${d.chip} in this simulator`);
    else if(BFN[nm]===0&&!lhs){feat(nm,r.line);}
    else if(P.procs[nm]&&P.procs[nm].isFn&&!lhs){if(P.procs[nm].params.length)E(r.line,`function "${r.raw}" needs ${P.procs[nm].params.length} value(s) in brackets`);}
-   else E(r.line,`unknown name "${r.raw}". Declare it in a "var" section`);
+   else E(r.line,isC?`unknown name "${r.raw}". Declare it first, for example: unsigned char ${r.raw};`:`unknown name "${r.raw}". Declare it in a "var" section`);
    if(r.index)ex(r.index);};
   const feat=(nm,line)=>{
    if(/^(uart1_|usart_)/.test(nm)){usesUart.v=true;if(d.pin.RC6===undefined)E(line,`${d.chip} has no UART. Use a PIC16F876A (TX = RC6, RX = RC7)`);}
@@ -1178,7 +1355,7 @@ function presolve(P,d){const SF=new Set(d.sfr);
    if(b!==undefined){if(x.args.length!==b)E(x.line,`${x.raw} needs ${b} value(s)`);feat(x.name,x.line);x.args.forEach(ex);return;}
    const pr=P.procs[x.name];if(!pr)E(x.line,`unknown function "${x.raw}"`);if(!pr.isFn)E(x.line,`"${x.raw}" is a procedure and does not return a value`);
    if(pr.params.length!==x.args.length)E(x.line,`"${x.raw}" needs ${pr.params.length} value(s)`);x.args.forEach(ex);};
-  const ex=x=>{if(!x)return;switch(x.k){case 'bin':ex(x.l);ex(x.r);break;case 'un':ex(x.e);break;case 'ref':ref(x,false);break;case 'fcall':fc(x);break;}};
+  const ex=x=>{if(!x)return;switch(x.k){case 'bin':ex(x.l);ex(x.r);break;case 'un':ex(x.e);break;case 'cast':ex(x.e);break;case 'cond':ex(x.c);ex(x.a);ex(x.b);break;case 'ref':ref(x,false);break;case 'fcall':fc(x);break;}};
   const st=s=>{if(!s)return;switch(s.k){
    case 'block':s.list.forEach(st);break;
    case 'assign':ref(s.d,true);ex(s.e);break;
@@ -1187,12 +1364,16 @@ function presolve(P,d){const SF=new Set(d.sfr);
    case 'repeat':s.list.forEach(st);ex(s.c);break;
    case 'for':ref(s.v,true);ex(s.a);ex(s.b);st(s.body);break;
    case 'case':ex(s.e);s.arms.forEach(a=>st(a.s));st(s.els);break;
+   case 'cfor':s.init.forEach(st);ex(s.c);s.step.forEach(st);st(s.body);break;
+   case 'switch':ex(s.e);s.body.forEach(st);break;
+   case 'ret':ex(s.e);break;
+   case 'brk':case 'cont':break;
    case 'call':{const b=BPROC[s.name];
     if(b){if(s.args.length<b.min||s.args.length>b.max)E(s.line,`${s.raw} needs ${b.min===b.max?b.min:b.min+' or '+b.max} value(s)`);feat(s.name,s.line);
      s.args.forEach((a,i)=>{if(b.refs.includes(i)){if(a.k!=='ref')E(s.line,`value ${i+1} of ${s.raw} must be a variable`);ref(a,true);}else ex(a);});break;}
     if(BFN[s.name]!==undefined){fc({...s,k:'fcall'});break;}
     const pr=P.procs[s.name];
-    if(!pr){if(scope[s.name]||P.globals[s.name]||SF.has(s.name))E(s.line,`expected ":=" after "${s.raw}"`);E(s.line,`unknown procedure "${s.raw}"`);}
+    if(!pr){if(scope[s.name]||P.globals[s.name]||SF.has(s.name))E(s.line,isC?`expected "=" after "${s.raw}"`:`expected ":=" after "${s.raw}"`);E(s.line,`unknown procedure "${s.raw}"`);}
     if(s.name==='interrupt')E(s.line,'do not call "interrupt" yourself: the PIC calls it when an interrupt flag is set');
     if(pr.params.length!==s.args.length)E(s.line,`"${s.raw}" needs ${pr.params.length} value(s)`);s.args.forEach(ex);break;}}};
   return st;};
@@ -1200,21 +1381,21 @@ function presolve(P,d){const SF=new Set(d.sfr);
  for(const pr of Object.values(P.procs))check(pr.locals,pr.name)({k:'block',list:pr.body});
  for(const k in P.globals){const ty=P.globals[k];if(ty.at)check({},null)({k:'assign',d:ty.at,e:{k:'num',v:0}});}
  if(usesLcd.v){const miss=LCD_NAMES.filter(n=>!(P.globals[n]&&P.globals[n].at));
-  if(miss.length)E(1,`the LCD library needs the pin declarations ${miss.map(x=>x.toUpperCase()).join(', ')}. Example: var LCD_RS : sbit at RB4_bit;`);
+  if(miss.length)E(1,`the LCD library needs the pin declarations ${miss.map(x=>x.toUpperCase()).join(', ')}. Example: ${isC?'sbit LCD_RS at RB4_bit;':'var LCD_RS : sbit at RB4_bit;'}`);
   for(const n of LCD_NAMES){const at=P.globals[n].at;if(!aliasPin(at,d))E(at.line,`${n.toUpperCase()} must be a port pin such as RB4_bit`);}}
  return P;}
 function aliasPin(at,d){let q,b;const m=BITRE.exec(at.name);
  if(m&&m[1]==='r'){q=m[2];b=+m[3];}else{const m2=/^port([a-e])$/.exec(at.name);if(!m2||at.bit==null)return null;q=m2[1];b=at.bit;}
  const pin=(d.ports[q]||[]).find(x=>x.bit===b);return pin?{q,b,idx:pin.idx}:null;}
 
-function compileCode(code,d){try{const P=pparse(plex(code));presolve(P,d);return {P};}catch(e){if(e instanceof PErr)return {err:`line ${e.line}: ${e.message}`,line:e.line};return {err:String(e.message||e)};}}
+function compileCode(code,d,lang){try{const P=lang==='mikroC'?pparseC(clex(code)):pparse(plex(code));presolve(P,d);return {P};}catch(e){if(e instanceof PErr)return {err:`line ${e.line}: ${e.message}`,line:e.line};return {err:String(e.message||e)};}}
 
 class Cpu{
  constructor(P,d){this.P=P;this.d=d;this.t=0;this.debt=0;this.halted=false;this.ended=false;this.err=null;this.pin=()=>0;this.vs=5;this.fosc=4e6;this.host=null;
   this.sfr={};for(const r of d.sfr)this.sfr[r]=r.startsWith('tris')||r==='option_reg'||r==='pr2'?0xFF:(r==='cmcon'?7:r==='txsta'?2:0);
   this.pre0=0;this.pre1=0;this.pre2=0;this.post2=0;this.rxq=[];this.waitUntil=0;this.isr=null;this.isrProc=P.procs.interrupt||null;this.lcdMap=null;this.lcdLost=false;
   this.G=this.frame(P.globals);this.L=null;this.curFn=null;this.stack=[];this.gen=this.main();}
- frame(decl){const f={};for(const k in decl){const ty=decl[k];f[k]={ty,v:ty.arr?new Array(ty.len).fill(0):(ty.base==='boolean'?false:ty.base==='string'?'':0)};}return f;}
+ frame(decl){const f={};for(const k in decl){const ty=decl[k];f[k]={ty,v:ty.arr?(ty.initArr?ty.initArr.slice():new Array(ty.len).fill(0)):(ty.base==='boolean'?false:ty.base==='string'?'':0)};}return f;}
  *main(){try{yield* this.list(this.P.body);}catch(e){if(e!==EXIT)throw e;}}
  *list(l){for(const s of l)yield* this.exec(s);}
  *exec(s){yield STEP;
@@ -1222,8 +1403,13 @@ class Cpu{
    case 'block':yield* this.list(s.list);break;
    case 'assign':this.store(s.d,this.ev(s.e));break;
    case 'if':if(ptrue(this.ev(s.c)))yield* this.exec(s.a);else if(s.b)yield* this.exec(s.b);break;
-   case 'while':while(ptrue(this.ev(s.c))){yield* this.exec(s.body);yield STEP;}break;
-   case 'repeat':do{yield* this.list(s.list);yield STEP;}while(!ptrue(this.ev(s.c)));break;
+   case 'while':while(ptrue(this.ev(s.c))){try{yield* this.exec(s.body);}catch(e){if(e===BRK)break;if(e!==CONT)throw e;}yield STEP;}break;
+   case 'repeat':for(;;){let br=false;try{yield* this.list(s.list);}catch(e){if(e===BRK)br=true;else if(e!==CONT)throw e;}if(br)break;yield STEP;if(ptrue(this.ev(s.c)))break;}break;
+   case 'cfor':{for(const x of s.init)yield* this.exec(x);while(!s.c||ptrue(this.ev(s.c))){try{yield* this.exec(s.body);}catch(e){if(e===BRK)break;if(e!==CONT)throw e;}for(const x of s.step)yield* this.exec(x);yield STEP;}break;}
+   case 'switch':{const v=pnum(this.ev(s.e));const hit=s.labels.find(l=>l[0]===v);const start=hit?hit[1]:s.dflt;if(start>=0){try{for(let i=start;i<s.body.length;i++)yield* this.exec(s.body[i]);}catch(e){if(e!==BRK)throw e;}}break;}
+   case 'brk':throw BRK;
+   case 'cont':throw CONT;
+   case 'ret':{if(s.e){const v=this.ev(s.e);if(this.L&&this.L.result)this.L.result.v=pwrap(this.L.result.ty.base,v,this.L.result.ty.len);}throw EXIT;}
    case 'for':{const a=pnum(this.ev(s.a)),b=pnum(this.ev(s.b));if(s.down?a<b:a>b)break;this.store(s.v,a);
     for(;;){yield* this.exec(s.body);yield STEP;const v=pnum(this.load(s.v));if(v===b||(s.down?v<b:v>b))break;this.store(s.v,s.down?v-1:v+1);}break;}
    case 'case':{const v=pnum(this.ev(s.e));const arm=s.arms.find(a=>a.labels.some(([lo,hi])=>v>=lo&&v<=hi));if(arm)yield* this.exec(arm.s);else if(s.els)yield* this.exec(s.els);break;}
@@ -1231,8 +1417,10 @@ class Cpu{
  isBit(r){if(r.k!=='ref')return false;if(r.bit!=null||BITRE.test(r.name)||GBITS[r.name])return true;const c=this.cell(r.name);return !!(c&&!c.ty.arr&&(c.ty.base==='bit'||c.ty.base==='sbit'));}
  ev(e){switch(e.k){
   case 'num':case 'bool':case 'str':return e.v;
-  case 'un':{const v=this.ev(e.e);if(e.op==='neg')return -pnum(v);if(typeof v==='boolean')return !v;if(this.isBit(e.e))return pnum(v)?0:1;return ~pnum(v);}
-  case 'bin':return pbin(e.op,this.ev(e.l),this.ev(e.r),e.line);
+  case 'un':{const v=this.ev(e.e);if(e.op==='lnot')return !ptrue(v);if(e.op==='neg')return -pnum(v);if(typeof v==='boolean')return !v;if(this.isBit(e.e))return pnum(v)?0:1;return ~pnum(v);}
+  case 'bin':if(e.op==='land')return ptrue(this.ev(e.l))&&ptrue(this.ev(e.r));if(e.op==='lor')return ptrue(this.ev(e.l))||ptrue(this.ev(e.r));return pbin(e.op,this.ev(e.l),this.ev(e.r),e.line);
+  case 'cond':return ptrue(this.ev(e.c))?this.ev(e.a):this.ev(e.b);
+  case 'cast':return pwrap(e.ty.base,this.ev(e.e));
   case 'ref':return this.load(e);
   case 'fcall':return this.fcall(e.name,e.args,e.line);}}
  cell(nm){if(this.L&&this.L[nm])return this.L[nm];return this.G[nm]||null;}
@@ -1240,7 +1428,7 @@ class Cpu{
  alias(r,at){return {k:'ref',name:at.name,raw:r.raw,line:r.line,index:null,bit:at.bit!=null?at.bit:r.bit};}
  load(r){const nm=r.name,bit=v=>r.bit!=null?(pnum(v)>>r.bit)&1:v;let c=this.cell(nm);
   if(c){if(c.ty.at)return this.load(this.alias(r,c.ty.at));
-   if(c.ty.arr)return bit(c.v[this.idx(r,c.ty.lo,c.ty.len)]);
+   if(c.ty.arr){if(!r.index){let t='';for(const x of c.v){if(!x)break;t+=String.fromCharCode(x);}return t;}return bit(c.v[this.idx(r,c.ty.lo,c.ty.len)]);}
    if(c.ty.base==='string'&&r.index){const i=pnum(this.ev(r.index));return i>=0&&i<c.v.length?c.v.charCodeAt(i):0;}
    return bit(c.v);}
   const k=this.P.consts[nm];if(k!==undefined){if(typeof k==='object')return bit(k.arr[this.idx(r,k.lo,k.arr.length)]);return bit(k);}
@@ -1254,6 +1442,7 @@ class Cpu{
  setb(old,b,val){old=pnum(old);return ptrue(val)?old|(1<<b):old&~(1<<b);}
  store(r,val){const nm=r.name;let c=this.cell(nm);if(!c&&this.curFn===nm)c=this.L.result;
   if(c){const ty=c.ty;if(ty.at)return this.store(this.alias(r,ty.at),val);
+   if(ty.arr&&!r.index){const t=pstr(val);for(let i=0;i<ty.len;i++)c.v[i]=i<t.length?t.charCodeAt(i)&255:0;return;}
    if(ty.arr){const i=this.idx(r,ty.lo,ty.len);c.v[i]=pwrap(ty.el,r.bit!=null?this.setb(c.v[i],r.bit,val):val);}
    else if(ty.base==='string'&&r.index){const i=pnum(this.ev(r.index));if(i<0||i>=ty.len)throw new PErr(r.line,`index ${i} is outside ${r.raw}[0..${ty.len-1}]`);let s=c.v.padEnd(i+1,' ');c.v=s.slice(0,i)+pstr(val)+s.slice(i+1);}
    else c.v=pwrap(ty.base,r.bit!=null?this.setb(c.v,r.bit,val):val,ty.len);return;}
@@ -1321,9 +1510,11 @@ class Cpu{
    case 'exit':throw EXIT;
    case 'inc':case 'dec':{const r=args[0],k=args[1]?a(1):1;this.store(r,pnum(this.load(r))+(nm==='inc'?k:-k));return;}
    case 'setbit':case 'clearbit':{this.store({...args[0],bit:a(1)},nm==='setbit'?1:0);return;}
-   case 'bytetostr':case 'shorttostr':case 'wordtostr':case 'inttostr':case 'longinttostr':case 'longwordtostr':{
-    const w={bytetostr:3,shorttostr:4,wordtostr:5,inttostr:6,longinttostr:11,longwordtostr:10}[nm];
-    const tw={bytetostr:'byte',shorttostr:'short',wordtostr:'word',inttostr:'integer',longinttostr:'longint',longwordtostr:'longword'}[nm];
+   case 'strcpy':this.store(args[0],pstr(this.ev(args[1])));return;
+   case 'strcat':this.store(args[0],pstr(this.load(args[0]))+pstr(this.ev(args[1])));return;
+   case 'bytetostr':case 'shorttostr':case 'wordtostr':case 'inttostr':case 'longinttostr':case 'longtostr':case 'longwordtostr':{
+    const w={bytetostr:3,shorttostr:4,wordtostr:5,inttostr:6,longinttostr:11,longtostr:11,longwordtostr:10}[nm];
+    const tw={bytetostr:'byte',shorttostr:'short',wordtostr:'word',inttostr:'integer',longinttostr:'longint',longtostr:'longint',longwordtostr:'longword'}[nm];
     this.store(args[1],String(pwrap(tw,this.ev(args[0]))).padStart(w,' '));yield 20e-6;return;}
    case 'floattostr':this.store(args[1],fmtReal(pnum(this.ev(args[0]))));yield 200e-6;return;
    case 'ltrim':this.store(args[0],pstr(this.load(args[0])).replace(/^\s+/,''));return;
@@ -1361,6 +1552,8 @@ class Cpu{
    case 'strtoint':case 'strtoword':{const n=parseInt(sv(0).trim(),10);return isNaN(n)?0:n;}
    case 'strtofloat':{const n=parseFloat(sv(0).trim());return isNaN(n)?0:n;}
    case 'ltrim':return sv(0).replace(/^\s+/,'');case 'rtrim':return sv(0).replace(/\s+$/,'');
+   case 'strcmp':{const x=sv(0),y=sv(1);return x<y?-1:x>y?1:0;}
+   case 'button':{const r=args[0];if(r.k!=='ref')throw new PErr(line,'Button needs a port, for example Button(&PORTA, 0, 1, 1)');this.debt+=Math.max(0,a(2))*1e-3;return ((pnum(this.load({...r,bit:a(1)}))&1)===(a(3)?1:0))?255:0;}
    case 'uart1_read':case 'usart_read':return this.rxq.length?this.rxq.shift():0;
    case 'uart1_data_ready':case 'usart_data_ready':return this.rxq.length?1:0;
    case 'uart1_tx_idle':return 1;}
@@ -1636,6 +1829,245 @@ begin
   while true do ;
 end.`},
 );
+
+const LCD_DECL_C=`// Connexions du LCD (comme sur la carte EasyPIC)
+sbit LCD_RS at RB4_bit;
+sbit LCD_EN at RB5_bit;
+sbit LCD_D4 at RB0_bit;
+sbit LCD_D5 at RB1_bit;
+sbit LCD_D6 at RB2_bit;
+sbit LCD_D7 at RB3_bit;
+sbit LCD_RS_Direction at TRISB4_bit;
+sbit LCD_EN_Direction at TRISB5_bit;
+sbit LCD_D4_Direction at TRISB0_bit;
+sbit LCD_D5_Direction at TRISB1_bit;
+sbit LCD_D6_Direction at TRISB2_bit;
+sbit LCD_D7_Direction at TRISB3_bit;`;
+const C_PROGS=[
+`// Clignotant : une LED sur RB0, 0,5 s allumée, 0,5 s éteinte
+void main() {
+  TRISB = 0x00;            // PORTB en sortie
+  PORTB = 0x00;
+  while (1) {
+    PORTB.F0 = 1;          // LED allumée
+    Delay_ms(500);
+    PORTB.F0 = 0;          // LED éteinte
+    Delay_ms(500);
+  }
+}`,
+`// Chenillard sur PORTB
+void main() {
+  unsigned char i;
+  TRISB = 0;               // PORTB en sortie
+  while (1) {
+    for (i = 0; i < 8; i++) {      // aller
+      PORTB = 1 << i;
+      Delay_ms(150);
+    }
+    for (i = 6; i >= 1; i--) {     // retour
+      PORTB = 1 << i;
+      Delay_ms(150);
+    }
+  }
+}`,
+`// Bouton sur RA0, LED sur RB0
+void main() {
+  TRISA = 0xFF;            // PORTA en entrée
+  TRISB = 0x00;            // PORTB en sortie
+  PORTB = 0;
+  while (1) {
+    if (PORTA.F0 == 1)
+      PORTB.F0 = 1;
+    else
+      PORTB.F0 = 0;
+  }
+}`,
+`// Compteur 0 à 9 sur afficheur cathode commune : a = RB0 ... g = RB6
+const unsigned short seg[10] = {0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F};
+
+void main() {
+  unsigned char i;
+  TRISB = 0;
+  while (1) {
+    for (i = 0; i <= 9; i++) {
+      PORTB = seg[i];
+      Delay_ms(1000);
+    }
+  }
+}`,
+`// Bargraphe : potentiomètre sur RA0 (CAN), 8 LED sur PORTB
+void main() {
+  unsigned int n;
+  unsigned char i, niveau;
+  TRISA = 0xFF;            // PORTA en entrée
+  TRISB = 0x00;            // PORTB en sortie
+  ADCON1 = 0x80;           // AN0 analogique, résultat à droite
+  ADC_Init();
+  while (1) {
+    n = ADC_Read(0);       // 0 ... 1023
+    niveau = n / 114;      // 0 ... 8 LED
+    PORTB = 0;
+    for (i = 1; i <= niveau; i++)
+      PORTB = (PORTB << 1) | 1;
+    Delay_ms(50);
+  }
+}`,
+`/* Quartz 4 MHz : TMR0 compte à 1 MHz / 256
+   Débordement toutes les 256 x 256 µs = 65,5 ms
+   8 débordements = 0,52 s */
+unsigned char compteur = 0;
+
+void interrupt() {
+  if (INTCON.T0IF) {
+    INTCON.T0IF = 0;           // effacer le drapeau
+    compteur++;
+    if (compteur == 8) {
+      compteur = 0;
+      PORTB.F0 = ~PORTB.F0;    // inverser la LED
+    }
+  }
+}
+
+void main() {
+  TRISB = 0;
+  PORTB = 0;
+  OPTION_REG = 0b10000111;     // horloge interne, prédiviseur 1:256
+  TMR0 = 0;
+  INTCON = 0b10100000;         // GIE = 1, T0IE = 1
+  while (1);                   // tout se passe dans l'interruption
+}`,
+`/* Quartz 4 MHz, prédiviseur 1:8 : 1 tick = 8 µs
+   62500 ticks = 0,5 s  ->  TMR1 = 65536 - 62500 = 3036 = 0x0BDC */
+void interrupt() {
+  if (PIR1.TMR1IF) {
+    PIR1.TMR1IF = 0;
+    TMR1H = 0x0B;
+    TMR1L = 0xDC;
+    PORTB.F0 = ~PORTB.F0;
+  }
+}
+
+void main() {
+  TRISB = 0;
+  PORTB = 0;
+  T1CON = 0b00110001;          // prédiviseur 1:8, TMR1ON = 1
+  TMR1H = 0x0B;
+  TMR1L = 0xDC;
+  PIE1.TMR1IE = 1;
+  INTCON.PEIE = 1;
+  INTCON.GIE = 1;
+  while (1);
+}`,
+`/* Bouton-poussoir sur RB0 (avec résistance de rappel à la masse)
+   Chaque appui inverse la LED sur RB1 */
+void interrupt() {
+  if (INTCON.INTF) {
+    INTCON.INTF = 0;
+    PORTB.F1 = ~PORTB.F1;
+  }
+}
+
+void main() {
+  TRISB = 0b00000001;          // RB0 en entrée, le reste en sortie
+  PORTB = 0;
+  OPTION_REG.INTEDG = 1;       // front montant
+  INTCON.INTE = 1;
+  INTCON.GIE = 1;
+  while (1);
+}`,
+`${LCD_DECL_C}
+
+char txt[4];
+
+void main() {
+  unsigned char i = 0;
+  Lcd_Init();
+  Lcd_Cmd(_LCD_CLEAR);
+  Lcd_Cmd(_LCD_CURSOR_OFF);
+  Lcd_Out(1, 1, "Electro Yosr");
+  Lcd_Out(2, 1, "Compteur:");
+  while (1) {
+    ByteToStr(i, txt);
+    Lcd_Out(2, 11, txt);
+    i++;                       // 255 + 1 = 0
+    Delay_ms(250);
+  }
+}`,
+`${LCD_DECL_C}
+
+unsigned int n;
+float u;
+char txt[16];
+
+void main() {
+  TRISA = 0xFF;
+  ADCON1 = 0x80;               // RA0 analogique
+  Lcd_Init();
+  Lcd_Cmd(_LCD_CURSOR_OFF);
+  Lcd_Out(1, 1, "Tension RA0 :");
+  while (1) {
+    n = ADC_Read(0);           // 0 ... 1023
+    u = n * 5.0 / 1023.0;      // conversion en volts
+    FloatToStr(u, txt);
+    Lcd_Out(2, 1, txt);
+    Lcd_Out_Cp(" V      ");
+    Delay_ms(200);
+  }
+}`,
+`// TX = RC6 vers RXD du terminal, RX = RC7 depuis TXD du terminal
+char c;
+unsigned int nb = 0;
+char txt[6];
+
+void main() {
+  UART1_Init(9600);
+  Delay_ms(100);
+  UART1_Write_Text("Bonjour ! Tapez un texte :");
+  UART1_Write(13);
+  UART1_Write(10);
+  while (1) {
+    if (UART1_Data_Ready()) {
+      c = UART1_Read();
+      UART1_Write(c);              // renvoyer le caractère
+      nb++;
+      if (c == 13) {               // touche Entrée
+        UART1_Write(10);
+        WordToStr(nb, txt);
+        UART1_Write_Text("Caracteres recus :");
+        UART1_Write_Text(txt);
+        UART1_Write(13);
+        UART1_Write(10);
+      }
+    }
+  }
+}`,
+`/* Chaque caractère reçu déclenche l'interruption RCIF.
+   '1' allume la LED RB0, '0' l'éteint. */
+char recu;
+
+void interrupt() {
+  if (PIR1.RCIF) {
+    recu = UART1_Read();       // la lecture efface RCIF
+    if (recu == '1') PORTB.F0 = 1;
+    if (recu == '0') PORTB.F0 = 0;
+    UART1_Write(recu);
+  }
+}
+
+void main() {
+  TRISB = 0;
+  PORTB = 0;
+  UART1_Init(9600);
+  UART1_Write_Text("Envoyez 1 ou 0");
+  UART1_Write(13);
+  UART1_Write(10);
+  PIE1.RCIE = 1;
+  INTCON.PEIE = 1;
+  INTCON.GIE = 1;
+  while (1);
+}`];
+const C_ORDER=['Clignotant','Chenillard','Bouton','Compteur','Bargraphe','Interruption Timer0','Interruption Timer1','Interruption externe','LCD · Bonjour','LCD · voltm','UART · écho','UART · interruption'];
+PIC_PROGS.forEach(p=>{const i=C_ORDER.findIndex(k=>p.name.startsWith(k));if(i>=0)p.c=C_PROGS[i];});
 
 /* ---------- IC and PIC example circuits ---------- */
 function picBase(code){return {c:[['pic876',10,3,0,{code}],['ground',8,10,0],['vcc',19,13,2]],w:[[10,10,8,10],[18,11,19,11],[19,11,19,13]]};}
@@ -2022,7 +2454,7 @@ function updateReadings(){
      rows=[['Supply',s.powered?fmt(s.vs||0,'V'):'Not connected'],['State',s.powered?'Powered':'No power']];
      if(d.kind==='555')rows.push(['Output (pin 3)',s.q?'1 (high)':'0 (low)']);
      if(d.kind==='4511')rows.push(['Input DCBA',s.code===undefined?'—':s.code+' ('+bin(s.code,4)+')']);
-     if(d.kind==='pic'){const cpu=c.cpu;rows.push(['Program',c.progErr?'Error':!s.powered?'Waiting for power':!c.prog?'None':!cpu?'—':cpu.err?'Stopped (error)':cpu.ended?'Finished':'Running']);
+     if(d.kind==='pic'){const cpu=c.cpu;rows.push(['Language',c.props.lang||'MikroPascal'],['Program',c.progErr?'Error':!s.powered?'Waiting for power':!c.prog?'None':!cpu?'—':cpu.err?'Stopped (error)':cpu.ended?'Finished':'Running']);
       if(cpu&&s.powered)for(const q in d.ports){const w=Math.max(...d.ports[q].map(x=>x.bit))+1;rows.push(['PORT'+q.toUpperCase(),bin(cpu.sfrRead('port'+q),w)],['TRIS'+q.toUpperCase(),bin(cpu.sfr['tris'+q],w)]);}}
      if(s.maxI)rows.push(['Highest pin current',fmt(s.maxI,'A')]);
      break;}}if(GATES.includes(c.type)||c.type==='not'){rows=[['Output',fmt(s.Vout||0,'V')],['Logic level',s.out?'1':'0']];break;}
@@ -2145,26 +2577,33 @@ function postDip(c,d,V,nt){const s=c.st,nd=c.nodes;const vg=V[nd[d.gndI]]||0,vs=
   else if(!c.prog&&s.powered)nt.push(['warn',`${c.label} has no program. Select it and press Edit program.`]);
   if(c.cpu&&c.cpu.lcdLost&&c.cpu.lcdMap){const m=c.cpu.lcdMap,pn=k=>d.names[m[k].idx];nt.push(['warn',`${c.label} writes to an LCD, but no powered LCD is wired to the pins in the program: RS = ${pn('rs')}, E = ${pn('en')}, D4–D7 = ${pn('d4')}, ${pn('d5')}, ${pn('d6')}, ${pn('d7')}.`]);}
   if(c.cpu&&c.cpu.uartLost)nt.push(['warn',`${c.label} sends on TX (RC6), but no virtual terminal RXD is wired to it.`]);}}
-function compileComp(c){const r=compileCode(c.props.code||'',DEFS[c.type]);if(r.err){c.prog=null;c.progErr=r.err;c.progErrLine=r.line;}else{c.prog=r.P;c.progErr=null;c.progErrLine=null;}c.cpu=null;if(c.st)c.st.powered=false;return r;}
+function compileComp(c){const r=compileCode(c.props.code||'',DEFS[c.type],c.props.lang);if(r.err){c.prog=null;c.progErr=r.err;c.progErrLine=r.line;}else{c.prog=r.P;c.progErr=null;c.progErrLine=null;}c.cpu=null;if(c.st)c.st.powered=false;return r;}
 
 /* ---------- program editor ---------- */
 let edComp=null;
 const picEx=$('#pic-ex');PIC_PROGS.forEach((x,i)=>{const o=document.createElement('option');o.value=i;o.textContent=x.name;picEx.appendChild(o);});
 function updGutter(errLine){const ta=$('#pic-code');const n=ta.value.split('\n').length;let h='';for(let i=1;i<=n;i++)h+=(i===errLine?`<b>${i}</b>`:i)+'\n';$('#pic-gutter').innerHTML=h;$('#pic-gutter').scrollTop=ta.scrollTop;}
 function edStatus(kind,msg){const el=$('#pic-status');el.className='edstatus'+(kind?' '+kind:'');el.textContent=msg;}
-function openEditor(c){edComp=c;const d=DEFS[c.type];$('#pic-title').textContent=`${c.label} · ${d.chip} program`;
+let edLang='MikroPascal';
+const LANGNOTE={MikroPascal:'Language: MikroPascal (the subset listed in Help → Programming the PIC). Names are not case-sensitive.',mikroC:'Language: mikroC (C). Start with void main() { … }. See Help → Programming in mikroC. Names are not case-sensitive here.'};
+function setEdLang(L){edLang=L;$('#pic-lang').value=L;$('#pic-langnote').textContent=LANGNOTE[L];}
+$('#pic-lang').addEventListener('change',()=>{const L=$('#pic-lang').value,ta=$('#pic-code'),v=ta.value.trim();
+ const ex=PIC_PROGS.find(x=>(x.code||'').trim()===v||(x.c||'').trim()===v);setEdLang(L);
+ if(ex||!v){ta.value=L==='mikroC'?(ex||PIC_PROGS[0]).c:(ex||PIC_PROGS[0]).code;updGutter();edStatus('',`Switched to ${L}. The example is shown in ${L}. Press Compile and load.`);}
+ else edStatus('',`Switched to ${L}. Your program was kept: rewrite it in ${L}, or load an example.`);});
+function openEditor(c){edComp=c;const d=DEFS[c.type];$('#pic-title').textContent=`${c.label} · ${d.chip} program`;setEdLang(c.draftLang||c.props.lang||'MikroPascal');
  const ta=$('#pic-code');ta.value=c.draft!=null?c.draft:(c.props.code||'');
  if(c.progErr){edStatus('err','Error, '+c.progErr);updGutter(c.progErrLine);}else{edStatus(c.prog?'ok':'',c.prog?'This program is loaded in the PIC.':'Press Compile and load to send the program to the PIC.');updGutter();}
  $('#pic-modal').hidden=false;ta.focus();}
 $('#pic-code').addEventListener('input',()=>updGutter());
 $('#pic-code').addEventListener('scroll',()=>{$('#pic-gutter').scrollTop=$('#pic-code').scrollTop;});
 $('#pic-code').addEventListener('keydown',e=>{if(e.key==='Tab'){e.preventDefault();const t=e.target,a=t.selectionStart;t.setRangeText('  ',a,t.selectionEnd,'end');updGutter();}});
-picEx.addEventListener('change',()=>{if(picEx.value==='')return;$('#pic-code').value=PIC_PROGS[+picEx.value].code;picEx.value='';updGutter();edStatus('','Example loaded. Press Compile and load to send it to the PIC.');});
-$('#pic-compile').onclick=()=>{const c=edComp;if(!c)return;const d=DEFS[c.type];c.props.code=$('#pic-code').value;c.draft=null;const r=compileComp(c);
+picEx.addEventListener('change',()=>{if(picEx.value==='')return;const ex=PIC_PROGS[+picEx.value];$('#pic-code').value=edLang==='mikroC'?ex.c:ex.code;picEx.value='';updGutter();edStatus('','Example loaded. Press Compile and load to send it to the PIC.');});
+$('#pic-compile').onclick=()=>{const c=edComp;if(!c)return;const d=DEFS[c.type];c.props.code=$('#pic-code').value;c.props.lang=edLang;c.draft=null;c.draftLang=null;const r=compileComp(c);
  if(r.err){edStatus('err','Error, '+r.err);updGutter(r.line);toast('The program has an error');}
  else{updGutter();edStatus('ok',pinConn(c,d.vccI)?'Compiled and loaded. The program is running.':`Compiled and loaded. Connect VDD (pin ${d.vccI+1}) to +5 V and VSS to ground to run it.`);toast('Program loaded into '+c.label);}
  save();renderProps();};
-$('#pic-close').onclick=()=>{if(edComp){const v=$('#pic-code').value;edComp.draft=v!==edComp.props.code?v:null;}$('#pic-modal').hidden=true;};
+$('#pic-close').onclick=()=>{if(edComp){const v=$('#pic-code').value;edComp.draft=v!==edComp.props.code?v:null;edComp.draftLang=edLang!==(edComp.props.lang||'MikroPascal')?edLang:null;}$('#pic-modal').hidden=true;};
 /* ---------- save modal ---------- */
 $('#b-save').onclick=()=>{$('#modal').hidden=false;$('#modal-text').value=serialize();$('#modal-text').select();};
 $('#m-close').onclick=()=>{$('#modal').hidden=true;};
@@ -2215,8 +2654,8 @@ $('#b-scopepng').onclick=()=>{const cv=$('#scope');const out=document.createElem
  out.toBlob(b=>{if(b){dlBlob(`oscilloscope-${stamp()}.png`,b);toast('Oscilloscope image saved');}},'image/png');};
 $('#m-dl').onclick=()=>{dlBlob(`circuit-${stamp()}.json`,new Blob([serialize()],{type:'application/json'}));toast('Circuit file downloaded');};
 $('#m-file').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{load(String(rd.result));$('#modal').hidden=true;toast(`Opened ${f.name}`);}catch(err){toast('This file is not an Electro Yosr circuit.');}e.target.value='';};rd.readAsText(f);});
-$('#pic-dl').onclick=()=>{const name=(edComp&&edComp.label?edComp.label:'pic')+'-program.mpas';dlBlob(name,new Blob([$('#pic-code').value],{type:'text/plain'}));toast('Program downloaded');};
-$('#pic-file').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{$('#pic-code').value=String(rd.result);updGutter();edStatus('',`Opened ${f.name}. Press Compile and load to send it to the PIC.`);e.target.value='';};rd.readAsText(f);});
+$('#pic-dl').onclick=()=>{const name=(edComp&&edComp.label?edComp.label:'pic')+(edLang==='mikroC'?'-program.c':'-program.mpas');dlBlob(name,new Blob([$('#pic-code').value],{type:'text/plain'}));toast('Program downloaded');};
+$('#pic-file').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{$('#pic-code').value=String(rd.result);if(/\.c$/i.test(f.name))setEdLang('mikroC');else if(/\.(mpas|pas)$/i.test(f.name))setEdLang('MikroPascal');updGutter();edStatus('',`Opened ${f.name}. Press Compile and load to send it to the PIC.`);e.target.value='';};rd.readAsText(f);});
 /* ---------- boot ---------- */
 sizeBoard();buildPalette();
 let loaded=false;try{const s=localStorage.getItem('electroyosr.v1')||localStorage.getItem('electrosim.v1');if(s){const d=JSON.parse(s);if(d.c&&d.c.length){load(d);loaded=true;}}}catch(e){}
